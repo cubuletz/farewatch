@@ -865,7 +865,7 @@ export default function App() {
       const newRoute = {
         from, to, depDate, retDate, isReturn, cheapest: res.data.cheapest, roundTripPrice,
         flights, returnFlights,
-        history: histRes.data.history.map(h => ({ ...h, date: h.date.slice(5, 16) })),
+        history: histRes.data.history.map(h => ({ ...h, date: (h.date || h.fetched_at || "").slice(5, 16) })),
         lowest: histRes.data.lowest, lastUpdated: new Date().toLocaleTimeString(),
       }
       const existingIdx = routes.findIndex(r => r.from === from && r.to === to && r.isReturn === isReturn)
@@ -1275,3 +1275,4 @@ EMAIL_PASS=your-app-password`}
 }
 
 // force rebuild
+
