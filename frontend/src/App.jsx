@@ -7,7 +7,7 @@ const API = 'https://farewatch-7qud.onrender.com/api'
 // ── Theme ─────────────────────────────────────────────────────────────────────
 const THEMES = {
   dark: {
-    bg: '#111128', surface: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.08)',
+    bg: '#1a1a3e', surface: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.08)',
     text: '#fff', muted: '#7ecfff', accent: '#00e5ff', accentGrad: 'linear-gradient(135deg,#00e5ff,#0072ff)',
     sidebar: '#14142e', sidebarBorder: 'rgba(255,255,255,0.06)', input: 'rgba(255,255,255,0.06)',
     card: 'rgba(255,255,255,0.07)', cardBorder: 'rgba(255,255,255,0.07)',
@@ -934,30 +934,31 @@ export default function App() {
             <h1 style={{ color: t.text, fontSize: isMobile ? 20 : 24, fontWeight: 800, marginBottom: isMobile ? 16 : 24 }}>Search Flights</h1>
 
             <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 16, padding: 24, marginBottom: 20 }}>
-              {/* One-way / Return */}
-              <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
-                {/* Passenger selector */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ color: t.muted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Adults</span>
-                    <button onClick={() => setAdults(a => Math.max(1, a - 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: "1px solid #444", background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
-                    <span style={{ color: t.text, fontWeight: 700, fontSize: 15, minWidth: 20, textAlign: 'center' }}>{adults}</span>
-                    <button onClick={() => setAdults(a => Math.min(9, a + 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: "1px solid #444", background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ color: t.muted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Children</span>
-                    <button onClick={() => setChildren(c => Math.max(0, c - 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: "1px solid #444", background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
-                    <span style={{ color: t.text, fontWeight: 700, fontSize: 15, minWidth: 20, textAlign: 'center' }}>{children}</span>
-                    <button onClick={() => setChildren(c => Math.min(8, c + 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: "1px solid #444", background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-                  </div>
-                  {(adults > 1 || children > 0) && <span style={{ color: t.accent, fontSize: 12, fontWeight: 600 }}>{adults + children} passengers - prices shown per person</span>}
+              {/* One-way / Return + Passengers */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {['One-way', 'Return'].map(opt => (
+                    <button key={opt} onClick={() => setIsReturn(opt === 'Return')}
+                      style={{ padding: '7px 18px', borderRadius: 20, fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', transition: 'all 0.2s', background: (opt === 'Return') === isReturn ? t.accentGrad : t.input, color: (opt === 'Return') === isReturn ? '#fff' : t.muted }}>
+                      {opt === 'Return' ? 'Return' : 'One-way'}
+                    </button>
+                  ))}
                 </div>
-                {['One-way', 'Return'].map(opt => (
-                  <button key={opt} onClick={() => setIsReturn(opt === 'Return')}
-                    style={{ padding: '7px 18px', borderRadius: 20, fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', transition: 'all 0.2s', background: (opt === 'Return') === isReturn ? t.accentGrad : t.input, color: (opt === 'Return') === isReturn ? '#fff' : t.muted }}>
-                    {opt === 'Return' ? '⇄ Return' : '→ One-way'}
-                  </button>
-                ))}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ color: t.muted, fontSize: 11 }}>Adults</span>
+                    <button onClick={() => setAdults(a => Math.max(1, a - 1))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1px solid #444', background: t.input, color: t.text, cursor: 'pointer', fontSize: 14 }}>-</button>
+                    <span style={{ color: t.text, fontWeight: 700, fontSize: 14, minWidth: 16, textAlign: 'center' }}>{adults}</span>
+                    <button onClick={() => setAdults(a => Math.min(9, a + 1))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1px solid #444', background: t.input, color: t.text, cursor: 'pointer', fontSize: 14 }}>+</button>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ color: t.muted, fontSize: 11 }}>Child</span>
+                    <button onClick={() => setChildren(c => Math.max(0, c - 1))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1px solid #444', background: t.input, color: t.text, cursor: 'pointer', fontSize: 14 }}>-</button>
+                    <span style={{ color: t.text, fontWeight: 700, fontSize: 14, minWidth: 16, textAlign: 'center' }}>{children}</span>
+                    <button onClick={() => setChildren(c => Math.min(8, c + 1))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1px solid #444', background: t.input, color: t.text, cursor: 'pointer', fontSize: 14 }}>+</button>
+                  </div>
+                </div>
+              </div>
               </div>
 
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 16, flexDirection: isMobile ? 'column' : 'row' }}>
@@ -1269,7 +1270,7 @@ EMAIL_PASS=your-app-password`}
       
     {/* Mobile bottom tab bar */}
       {isMobile && (
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100, background: t.sidebar, borderTop: `1px solid ${t.sidebarBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '8px 0 12px' }}>
+        <div style={{ position: 'fixed', bottom: 0, zIndex: 100, left: 0, right: 0, background: t.sidebar, borderTop: `1px solid ${t.sidebarBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '8px 0 12px' }}>
           {[
             { id: 'search', icon: '🔍', label: 'Search' },
             { id: 'tracked', icon: '📍', label: 'Tracked', badge: routes.length },
@@ -1293,6 +1294,8 @@ EMAIL_PASS=your-app-password`}
 }
 
 // force rebuild
+
+
 
 
 
