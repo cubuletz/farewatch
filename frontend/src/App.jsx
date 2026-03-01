@@ -803,6 +803,8 @@ export default function App() {
   const [depDate, setDepDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0] })
   const [retDate, setRetDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() + 37); return d.toISOString().split('T')[0] })
   const [isReturn, setIsReturn] = useState(false)
+  const [adults, setAdults] = useState(1)
+  const [children, setChildren] = useState(0)
   const [directOnly, setDirectOnly] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -850,7 +852,7 @@ export default function App() {
     if (!from || !to || from === to) { setError('Please select different airports.'); return }
     setLoading(true); setError(null)
     try {
-      const res = await axios.get(`${API}/flights/search`, { params: { from, to, date: depDate } })
+      const res = await axios.get(`${API}/flights/search`, { params: { from, to, date: depDate, adults, children } })
       let flights = res.data.flights
       if (directOnly) flights = flights.filter(f => f.stops === 0)
       let returnFlights = []; let returnCheapest = null
@@ -934,6 +936,22 @@ export default function App() {
             <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 16, padding: 24, marginBottom: 20 }}>
               {/* One-way / Return */}
               <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+                {/* Passenger selector */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ color: t.muted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Adults</span>
+                    <button onClick={() => setAdults(a => Math.max(1, a - 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: 1px solid , background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
+                    <span style={{ color: t.text, fontWeight: 700, fontSize: 15, minWidth: 20, textAlign: 'center' }}>{adults}</span>
+                    <button onClick={() => setAdults(a => Math.min(9, a + 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: 1px solid , background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ color: t.muted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Children</span>
+                    <button onClick={() => setChildren(c => Math.max(0, c - 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: 1px solid , background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
+                    <span style={{ color: t.text, fontWeight: 700, fontSize: 15, minWidth: 20, textAlign: 'center' }}>{children}</span>
+                    <button onClick={() => setChildren(c => Math.min(8, c + 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: 1px solid , background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                  </div>
+                  {(adults > 1 || children > 0) && <span style={{ color: t.accent, fontSize: 12, fontWeight: 600 }}>?? {adults + children} passengers · prices shown per person</span>}
+                </div>
                 {['One-way', 'Return'].map(opt => (
                   <button key={opt} onClick={() => setIsReturn(opt === 'Return')}
                     style={{ padding: '7px 18px', borderRadius: 20, fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', transition: 'all 0.2s', background: (opt === 'Return') === isReturn ? t.accentGrad : t.input, color: (opt === 'Return') === isReturn ? '#fff' : t.muted }}>
@@ -1275,4 +1293,6 @@ EMAIL_PASS=your-app-password`}
 }
 
 // force rebuild
+
+
 
