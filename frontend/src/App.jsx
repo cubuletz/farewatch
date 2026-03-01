@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import axios from 'axios'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+const API = 'https://farewatch-7qud.onrender.com/api'
 
 // ── Theme ─────────────────────────────────────────────────────────────────────
 const THEMES = {
