@@ -1,95 +1,30 @@
-const path = require('path')
-const fs = require('fs')
+const { Pool } = require('pg')
 
-// Use better-sqlite3 locally, fall back to sql.js on Render
-let db
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+})
 
-function initDB() {
-  try {
-    const Database = require('better-sqlite3')
-    const dbPath = path.join(__dirname, 'farewatch.db')
-    db = new Database(dbPath)
-    console.log('Using better-sqlite3')
-    setupSchema()
-  } catch (e) {
-    console.log('better-sqlite3 failed, using sql.js:', e.message)
-    initSqlJs()
-  }
-}
-
-function initSqlJs() {
-  const initSqlJsLib = require('sql.js')
-  const dbPath = path.join(__dirname, 'farewatch.db')
-  
-  initSqlJsLib().then(SQL => {
-    let dbData
-    try {
-      dbData = fs.readFileSync(dbPath)
-    } catch (e) {
-      dbData = null
-    }
-    
-    const sqlDb = dbData ? new SQL.Database(dbData) : new SQL.Database()
-    
-    // Wrap sql.js to match better-sqlite3 API
-    db = {
-      prepare: (sql) => ({
-        run: (...params) => {
-          sqlDb.run(sql, params)
-          saveDb(sqlDb, dbPath)
-          return { lastInsertRowid: sqlDb.exec('SELECT last_insert_rowid()')[0]?.values[0][0] }
-        },
-        get: (...params) => {
-          const res = sqlDb.exec(sql, params)
-          if (!res[0]) return undefined
-          const cols = res[0].columns
-          const row = res[0].values[0]
-          if (!row) return undefined
-          return Object.fromEntries(cols.map((c, i) => [c, row[i]]))
-        },
-        all: (...params) => {
-          const res = sqlDb.exec(sql, params)
-          if (!res[0]) return []
-          const cols = res[0].columns
-          return res[0].values.map(row => Object.fromEntries(cols.map((c, i) => [c, row[i]])))
-        }
-      }),
-      exec: (sql) => { sqlDb.run(sql); saveDb(sqlDb, dbPath) }
-    }
-    
-    console.log('Using sql.js')
-    setupSchema()
-  })
-}
-
-function saveDb(sqlDb, dbPath) {
-  try {
-    const data = sqlDb.export()
-    fs.writeFileSync(dbPath, Buffer.from(data))
-  } catch (e) {}
-}
-
-function setupSchema() {
-  db.exec(`
+async function setupSchema() {
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS routes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       from_code TEXT NOT NULL,
       to_code TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      created_at TIMESTAMP DEFAULT NOW(),
       UNIQUE(from_code, to_code)
     );
     CREATE TABLE IF NOT EXISTS price_history (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      route_id INTEGER,
+      id SERIAL PRIMARY KEY,
+      route_id INTEGER REFERENCES routes(id),
       price REAL NOT NULL,
       currency TEXT DEFAULT 'GBP',
       airline TEXT,
       stops INTEGER DEFAULT 0,
-      fetched_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (route_id) REFERENCES routes(id)
+      fetched_at TIMESTAMP DEFAULT NOW()
     );
     CREATE TABLE IF NOT EXISTS alerts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       from_code TEXT NOT NULL,
       to_code TEXT NOT NULL,
       email TEXT NOT NULL,
@@ -97,53 +32,76 @@ function setupSchema() {
       target_percent REAL,
       alert_type TEXT DEFAULT 'price',
       is_active INTEGER DEFAULT 1,
-      last_sent DATETIME,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      last_sent TIMESTAMP,
+      created_at TIMESTAMP DEFAULT NOW()
     );
   `)
-  console.log('✅ Database schema ready')
+  console.log('? Database schema ready')
 }
 
-function savePrice(from, to, price, currency, airline, stops) {
+setupSchema().catch(console.error)
+
+async function savePrice(from, to, price, currency, airline, stops) {
   try {
-    db.prepare('INSERT OR IGNORE INTO routes (from_code, to_code) VALUES (?, ?)').run(from, to)
-    const route = db.prepare('SELECT id FROM routes WHERE from_code = ? AND to_code = ?').get(from, to)
-    if (route) {
-      db.prepare('INSERT INTO price_history (route_id, price, currency, airline, stops) VALUES (?, ?, ?, ?, ?)').run(route.id, price, currency, airline, stops)
+    await pool.query('INSERT INTO routes (from_code, to_code) VALUES ($1, $2) ON CONFLICT DO NOTHING', [from, to])
+    const { rows } = await pool.query('SELECT id FROM routes WHERE from_code = $1 AND to_code = $2', [from, to])
+    if (rows[0]) {
+      await pool.query('INSERT INTO price_history (route_id, price, currency, airline, stops) VALUES ($1, $2, $3, $4, $5)', [rows[0].id, price, currency, airline, stops])
     }
   } catch (e) {
     console.error('savePrice error:', e.message)
   }
 }
 
-function getPriceHistory(from, to, days = 365) {
+async function getPriceHistory(from, to, days = 365) {
   try {
-    return db.prepare(`
+    const { rows } = await pool.query(`
       SELECT ph.price, ph.airline, ph.fetched_at
       FROM price_history ph
       JOIN routes r ON ph.route_id = r.id
-      WHERE r.from_code = ? AND r.to_code = ?
-      AND ph.fetched_at >= datetime('now', '-' || ? || ' days')
+      WHERE r.from_code = $1 AND r.to_code = $2
+      AND ph.fetched_at >= NOW() - ($3 || ' days')::INTERVAL
       ORDER BY ph.fetched_at ASC
-    `).all(from, to, days)
-  } catch (e) {
-    return []
-  }
+    `, [from, to, days])
+    return rows
+  } catch (e) { return [] }
 }
 
-function getLowestPrice(from, to) {
+async function getLowestPrice(from, to) {
   try {
-    return db.prepare(`
+    const { rows } = await pool.query(`
       SELECT MIN(ph.price) as lowest
       FROM price_history ph
       JOIN routes r ON ph.route_id = r.id
-      WHERE r.from_code = ? AND r.to_code = ?
-    `).get(from, to)
-  } catch (e) {
-    return null
-  }
+      WHERE r.from_code = $1 AND r.to_code = $2
+    `, [from, to])
+    return rows[0]
+  } catch (e) { return null }
 }
 
-initDB()
+async function getAlerts() {
+  const { rows } = await pool.query('SELECT * FROM alerts WHERE is_active = 1')
+  return rows
+}
 
-module.exports = { get db() { return db }, savePrice, getPriceHistory, getLowestPrice }
+async function getAlertsForRoute(from, to, email) {
+  const { rows } = await pool.query('SELECT * FROM alerts WHERE from_code = $1 AND to_code = $2 AND email = $3 AND is_active = 1', [from, to, email])
+  return rows
+}
+
+async function saveAlert(from, to, email, targetPrice, targetPercent, alertType) {
+  await pool.query(
+    'INSERT INTO alerts (from_code, to_code, email, threshold, target_percent, alert_type) VALUES ($1, $2, $3, $4, $5, $6)',
+    [from, to, email, targetPrice || null, targetPercent || null, alertType || 'price']
+  )
+}
+
+async function deactivateAlert(id) {
+  await pool.query('UPDATE alerts SET is_active = 0 WHERE id = $1', [id])
+}
+
+async function updateAlertSent(id) {
+  await pool.query('UPDATE alerts SET last_sent = NOW() WHERE id = $1', [id])
+}
+
+module.exports = { pool, savePrice, getPriceHistory, getLowestPrice, getAlerts, getAlertsForRoute, saveAlert, deactivateAlert, updateAlertSent }
