@@ -799,7 +799,7 @@ export default function App() {
   const [routes, setRoutes] = useState([])
   const [selectedRouteIdx, setSelectedRouteIdx] = useState(null)
   const [from, setFrom] = useState('LHR')
-  const [to, setTo] = useState('JFK')
+  const [to, setTo] = useState('')
   const [depDate, setDepDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0] })
   const [retDate, setRetDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() + 37); return d.toISOString().split('T')[0] })
   const [isReturn, setIsReturn] = useState(false)
@@ -1294,6 +1294,7 @@ EMAIL_PASS=your-app-password`}
 }
 
 // force rebuild
+
 
 
 
