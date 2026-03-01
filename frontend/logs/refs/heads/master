@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 b0dbd9b470f8bbfb80f84b1966b98eec291b545a cubuletz <cristianciobanu1982@yahoo.co.uk> 1772313429 +0000	commit (initial): Initial frontend commit
+b0dbd9b470f8bbfb80f84b1966b98eec291b545a 998f95973817f34147e5cb01a7e7bfd5d18aca41 cubuletz <cristianciobanu1982@yahoo.co.uk> 1772316749 +0000	commit: Mobile responsive layout + logo update
+998f95973817f34147e5cb01a7e7bfd5d18aca41 9f3d78b98452fcdc6dd915ae55b00497402cf597 cubuletz <cristianciobanu1982@yahoo.co.uk> 1772318390 +0000	commit: Update backend URL for production
+9f3d78b98452fcdc6dd915ae55b00497402cf597 b1f9abc0dbdc67427aae68945562ba1abeaa1b1b cubuletz <cristianciobanu1982@yahoo.co.uk> 1772386006 +0000	commit: Mobile calendar fix + lighter dark theme
