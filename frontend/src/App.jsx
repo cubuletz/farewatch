@@ -883,7 +883,7 @@ export default function App() {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: t.bg, fontFamily: "'DM Sans', sans-serif", color: t.text, transition: 'all 0.3s' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: t.bg, fontFamily: "'DM Sans', sans-serif", color: t.text, transition: 'all 0.3s', overflowX: 'hidden', maxWidth: '100vw' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=Space+Mono:wght@700&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1294,6 +1294,7 @@ EMAIL_PASS=your-app-password`}
 }
 
 // force rebuild
+
 
 
 
