@@ -940,15 +940,15 @@ export default function App() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ color: t.muted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Adults</span>
-                    <button onClick={() => setAdults(a => Math.max(1, a - 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: 1px solid , background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
+                    <button onClick={() => setAdults(a => Math.max(1, a - 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: "1px solid #444", background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
                     <span style={{ color: t.text, fontWeight: 700, fontSize: 15, minWidth: 20, textAlign: 'center' }}>{adults}</span>
-                    <button onClick={() => setAdults(a => Math.min(9, a + 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: 1px solid , background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                    <button onClick={() => setAdults(a => Math.min(9, a + 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: "1px solid #444", background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ color: t.muted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Children</span>
-                    <button onClick={() => setChildren(c => Math.max(0, c - 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: 1px solid , background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
+                    <button onClick={() => setChildren(c => Math.max(0, c - 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: "1px solid #444", background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
                     <span style={{ color: t.text, fontWeight: 700, fontSize: 15, minWidth: 20, textAlign: 'center' }}>{children}</span>
-                    <button onClick={() => setChildren(c => Math.min(8, c + 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: 1px solid , background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                    <button onClick={() => setChildren(c => Math.min(8, c + 1))} style={{ width: 28, height: 28, borderRadius: '50%', border: "1px solid #444", background: t.input, color: t.text, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
                   </div>
                   {(adults > 1 || children > 0) && <span style={{ color: t.accent, fontSize: 12, fontWeight: 600 }}>?? {adults + children} passengers · prices shown per person</span>}
                 </div>
@@ -1293,6 +1293,7 @@ EMAIL_PASS=your-app-password`}
 }
 
 // force rebuild
+
 
 
 
