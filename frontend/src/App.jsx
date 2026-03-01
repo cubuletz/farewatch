@@ -958,7 +958,7 @@ export default function App() {
                     <button onClick={() => setChildren(c => Math.min(8, c + 1))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1px solid #444', background: t.input, color: t.text, cursor: 'pointer', fontSize: 14 }}>+</button>
                   </div>
                 </div>
-              </div>
+
               </div>
 
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 16, flexDirection: isMobile ? 'column' : 'row' }}>
