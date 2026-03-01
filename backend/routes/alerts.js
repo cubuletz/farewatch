@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const nodemailer = require('nodemailer')
-const { db } = require('../database')
+const db = require('../database')
 
 // Save an alert
 router.post('/alerts', (req, res) => {
