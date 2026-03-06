@@ -964,7 +964,7 @@ export default function App() {
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 16, flexDirection: isMobile ? 'column' : 'row' }}>
                 <AirportInput label="From" value={getAirportLabel(from)} onChange={setFrom} theme={theme} fullWidth={isMobile} />
                 <AirportInput label="To" value={getAirportLabel(to)} onChange={setTo} theme={theme} fullWidth={isMobile} />
-                  {loading ? 'Searching...' : 'Search'}
+                <DateInput label="Depart" value={depDate} onChange={setDepDate} theme={theme} isMobile={isMobile} />
                 {isReturn && <DateInput label="Return" value={retDate} onChange={setRetDate} theme={theme} isMobile={isMobile} />}
                 <button onClick={search} disabled={loading}
                   style={{ background: loading ? t.muted : t.accentGrad, border: 'none', borderRadius: 10, color: '#fff', fontSize: 15, fontWeight: 700, padding: '12px 28px', cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s', alignSelf: isMobile ? 'stretch' : 'flex-end', width: isMobile ? '100%' : 'auto' }}>
