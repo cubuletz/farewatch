@@ -967,7 +967,7 @@ export default function App() {
                 <DateInput label="Depart" value={depDate} onChange={setDepDate} theme={theme} isMobile={isMobile} />
                 {isReturn && <DateInput label="Return" value={retDate} onChange={setRetDate} theme={theme} isMobile={isMobile} />}
                 <button onClick={search} disabled={loading}
-                  style={{ background: loading ? t.muted : t.accentGrad, border: 'none', borderRadius: 10, color: '#fff', fontSize: 15, fontWeight: 700, padding: '12px 28px', cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s', alignSelf: isMobile ? 'stretch' : 'flex-end', width: isMobile ? '100%' : 'auto' }}>
+                  {loading ? 'Searching...' : 'Search Flights'}
                   {loading ? '⏳ Searching...' : '🔍 Search'}
                 </button>
               </div>
@@ -1081,7 +1081,6 @@ export default function App() {
                         <div style={{ background: `${t.danger}11`, border: `1px solid ${t.danger}33`, borderRadius: 12, padding: 16, color: t.danger, fontSize: 13 }}>No return flights for this time slot.</div>
                       ) : filterByTime(selectedRoute.returnFlights).map((f, i) => <FlightCard key={i} flight={f} index={i} theme={theme} />)}
                     </>
-                  )}
             )}
 
             {routes.length === 0 && !loading && (
