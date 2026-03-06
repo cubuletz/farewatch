@@ -683,7 +683,7 @@ function RoutePill({ route, isSelected, onClick, onRemove, theme }) {
 
 function FlightCard({ flight: f, index: i, theme }) {
   const t = THEMES[theme]
-  const airlineUrl = getAirlineUrl(f.airline)
+  const airlineUrl = f.booking_link || getAirlineUrl(f.airline)
   const [focused, setFocused] = useState(false)
   return (
     <div tabIndex={0} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
@@ -1085,60 +1085,7 @@ export default function App() {
 
                   {/* Budget airlines section */}
                   <div style={{ marginTop: 20, background: t.surface, border: `1px solid ${t.border}`, borderRadius: 14, padding: 16 }}>
-                    <div style={{ color: t.muted, fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>🔍 Also check these airlines</div>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                      {buildBudgetLinks(selectedRoute.from, selectedRoute.to, selectedRoute.depDate).map(airline => (
-                        <a key={airline.name} href={airline.url} target="_blank" rel="noopener noreferrer"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 20, fontSize: 12, fontWeight: 700, border: `1px solid ${airline.color}44`, background: `${airline.color}11`, color: airline.color, textDecoration: 'none', transition: 'all 0.2s' }}
-                          onMouseEnter={e => e.currentTarget.style.background = `${airline.color}22`}
-                          onMouseLeave={e => e.currentTarget.style.background = `${airline.color}11`}>
-                          {airline.name} →
-                        </a>
-                      ))}
-                    </div>
-                    <p style={{ color: t.muted, fontSize: 11, marginTop: 10, opacity: 0.7 }}>
-                      ⚠️ Prices shown are from Amadeus GDS and may differ from airline websites. Budget carriers like Ryanair and easyJet sell direct — always check their sites for the best fare.
-                    </p>
-                  </div>
-
-                  {/* Alert panel */}
-                  {showAlertPanel && <AlertPanel from={selectedRoute.from} to={selectedRoute.to} theme={theme} />}
-                </div>
-
-                {/* Chart */}
-                <div style={{ flex: '2 1 400px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <h2 style={{ color: t.muted, fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>Price History · {selectedRoute.from} → {selectedRoute.to}</h2>
-                    <PriceBadge current={selectedRoute.cheapest} min={selectedRoute.lowest} max={maxPrice} theme={theme} />
-                  </div>
-                  {filteredHistory.length === 0 ? (
-                    <div style={{ background: t.card, border: `1px solid ${t.cardBorder}`, borderRadius: 16, padding: 40, textAlign: 'center', color: t.muted }}>
-                      <div style={{ fontSize: 32, marginBottom: 12 }}>📈</div>
-                      <p>No history yet. Prices are saved on every search!</p>
-                    </div>
-                  ) : (
-                    <div style={{ background: t.card, border: `1px solid ${t.cardBorder}`, borderRadius: 16, padding: '20px 16px 12px' }}>
-                      {/* Time range */}
-                      <div style={{ display: 'flex', gap: 6, marginBottom: 16, justifyContent: 'flex-end' }}>
-                        {[{ label: '7D', days: 7 }, { label: '30D', days: 30 }, { label: '90D', days: 90 }, { label: '1Y', days: 365 }].map(t2 => (
-                          <button key={t2.label} onClick={() => setChartDays(t2.days)} tabIndex={0}
-                            style={{ padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer', transition: 'all 0.2s', background: chartDays === t2.days ? t.accentGrad : t.input, color: chartDays === t2.days ? '#fff' : t.muted }}>
-                            {t2.label}
-                          </button>
-                        ))}
-                      </div>
-                      {/* Stats */}
-                      <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
-                        {[
-                          { label: 'Current', value: `£${selectedRoute.cheapest}`, color: t.text },
-                          { label: 'Lowest ever', value: `£${selectedRoute.lowest ?? Math.min(...filteredHistory.map(h => h.price))}`, color: t.success },
-                          { label: 'Highest', value: `£${maxPrice}`, color: t.danger },
-                          { label: 'Data points', value: filteredHistory.length, color: t.warning },
-                        ].map(s => (
-                          <div key={s.label} style={{ flex: '1 1 80px', background: t.surface, border: `1px solid ${t.border}`, borderRadius: 10, padding: '10px 12px' }}>
-                            <div style={{ color: t.muted, fontSize: 10, marginBottom: 3, textTransform: 'uppercase' }}>{s.label}</div>
-                            <div style={{ color: s.color, fontSize: 16, fontWeight: 700 }}>{s.value}</div>
-                          </div>
+                    <div style={{ color: t.muted, fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>🔍 
                         ))}
                       </div>
                       <ResponsiveContainer width="100%" height={240}>
@@ -1294,6 +1241,7 @@ EMAIL_PASS=your-app-password`}
 }
 
 // force rebuild
+
 
 
 
