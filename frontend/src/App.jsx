@@ -878,7 +878,7 @@ export default function App() {
         setRoutes(prev => [...prev, newRoute]); setSelectedRouteIdx(routes.length)
       }
       setActiveTab('search')
-    } catch (e) { setError(e.response?.data?.error || 'Failed to fetch prices. Is the backend running?') }
+    } catch (e) { setError(typeof e.response?.data?.error === 'string' ? e.response.data.error : 'Failed to fetch prices. Is the backend running?') }
     setLoading(false)
   }
 
@@ -1294,6 +1294,7 @@ EMAIL_PASS=your-app-password`}
 }
 
 // force rebuild
+
 
 
 
