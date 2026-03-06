@@ -17,6 +17,7 @@ router.get('/search', async (req, res) => {
         render_js: 'true',
         wait: '4000',
         block_ads: 'true',
+        custom_google: 'true',
       },
       timeout: 60000
     })
@@ -71,3 +72,4 @@ router.get('/history', async (req, res) => {
 })
 
 module.exports = router
+
