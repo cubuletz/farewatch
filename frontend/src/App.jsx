@@ -1063,18 +1063,6 @@ export default function App() {
                           <div style={{ color: t.muted, fontSize: 11 }}>{getAirlineName(selectedRoute.returnFlights.reduce((a, b) => a.price < b.price ? a : b).airline)}</div>
                         </div>
                       )}
-                    </div>
-                  )}
-
-                  {/* Outbound flights */}
-                  {filterByTime(selectedRoute.flights).length === 0 ? (
-                    <div style={{ background: `${t.danger}11`, border: `1px solid ${t.danger}33`, borderRadius: 12, padding: 16, color: t.danger, fontSize: 13 }}>No flights for this time slot. Try a different time filter.</div>
-                  ) : filterByTime(selectedRoute.flights).map((f, i) => <FlightCard key={i} flight={f} index={i} theme={theme} />)}
-
-                  {/* Return flights */}
-                  {selectedRoute.isReturn && selectedRoute.returnFlights.length > 0 && (
-                    <>
-                      <h2 style={{ color: t.muted, fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, margin: '20px 0 10px' }}>
                         🔄 Return: {selectedRoute.to} → {selectedRoute.from} · {selectedRoute.retDate}
                       </h2>
                       {filterByTime(selectedRoute.returnFlights).length === 0 ? (
