@@ -16,8 +16,7 @@ router.get('/search', async (req, res) => {
         outbound_date: date,
         currency: 'GBP',
         hl: 'en',
-        type: req.query.returnDate ? '1' : '2',
-        return_date: req.query.returnDate || undefined,
+        type: '2',
         adults: adults,
         children: children,
         api_key: process.env.SERPAPI_KEY,
@@ -78,6 +77,7 @@ router.get('/history', async (req, res) => {
 })
 
 module.exports = router
+
 
 
 
