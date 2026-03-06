@@ -1082,22 +1082,6 @@ export default function App() {
                       ) : filterByTime(selectedRoute.returnFlights).map((f, i) => <FlightCard key={i} flight={f} index={i} theme={theme} />)}
                     </>
                   )}
-
-                      </div>
-                      <ResponsiveContainer width="100%" height={240}>
-                        <LineChart data={filteredHistory} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke={t.chartGrid} vertical={false} />
-                          <XAxis dataKey="date" tick={{ fill: t.muted, fontSize: 10 }} tickLine={false} axisLine={false} />
-                          <YAxis tick={{ fill: t.muted, fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={v => `£${v}`} domain={['auto', 'auto']} />
-                          <Tooltip content={<CustomTooltip theme={theme} />} />
-                          {selectedRoute.lowest && <ReferenceLine y={selectedRoute.lowest} stroke={`${t.success}88`} strokeDasharray="4 3" label={{ value: 'Best', fill: t.success, fontSize: 10, position: 'right' }} />}
-                          <Line type="monotone" dataKey="price" stroke={t.accent} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: t.accent, strokeWidth: 0 }} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  )}
-                </div>
-              </div>
             )}
 
             {routes.length === 0 && !loading && (
