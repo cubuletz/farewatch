@@ -1083,10 +1083,6 @@ export default function App() {
                     </>
                   )}
 
-                  {/* Budget airlines section */}
-                  <div style={{ marginTop: 20, background: t.surface, border: `1px solid ${t.border}`, borderRadius: 14, padding: 16 }}>
-                    <div style={{ color: t.muted, fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>🔍 
-                        ))}
                       </div>
                       <ResponsiveContainer width="100%" height={240}>
                         <LineChart data={filteredHistory} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
@@ -1241,6 +1237,7 @@ EMAIL_PASS=your-app-password`}
 }
 
 // force rebuild
+
 
 
 
