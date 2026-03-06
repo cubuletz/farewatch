@@ -45,7 +45,7 @@ router.get('/search', async (req, res) => {
         arrival: f.flights?.slice(-1)[0]?.arrival_airport?.time || date + ' 00:00',
         duration: f.total_duration,
         flight_number: leg?.flight_number || '',
-        booking_token: f.booking_token || null,
+        booking_link: f.booking_token ? `https://www.google.com/flights?hl=en#flt=..` : null,
         booking_link: f.booking_token ? https://www.google.com/flights?hl=en#flt=.. : null,
       }
     }).sort((a, b) => a.price - b.price)
