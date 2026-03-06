@@ -46,7 +46,7 @@ router.get('/search', async (req, res) => {
         duration: f.total_duration,
         flight_number: leg?.flight_number || '',
         booking_token: f.booking_token || null,
-        booking_link: f.booking_options?.[0]?.book_with_data?.[0]?.book_with_link || null,
+        booking_link: f.booking_token ? https://www.google.com/flights?hl=en#flt=.. : null,
       }
     }).sort((a, b) => a.price - b.price)
 
@@ -79,6 +79,7 @@ router.get('/history', async (req, res) => {
 })
 
 module.exports = router
+
 
 
 
