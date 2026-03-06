@@ -45,6 +45,8 @@ router.get('/search', async (req, res) => {
         arrival: f.flights?.slice(-1)[0]?.arrival_airport?.time || date + ' 00:00',
         duration: f.total_duration,
         flight_number: leg?.flight_number || '',
+        booking_token: f.booking_token || null,
+        booking_link: f.booking_options?.[0]?.book_with_data?.[0]?.book_with_link || null,
       }
     }).sort((a, b) => a.price - b.price)
 
@@ -77,6 +79,7 @@ router.get('/history', async (req, res) => {
 })
 
 module.exports = router
+
 
 
 
