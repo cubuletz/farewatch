@@ -7,7 +7,7 @@ router.get('/search', async (req, res) => {
   const { from, to, date, adults = 1, children = 0 } = req.query
   if (!from || !to || !date) return res.status(400).json({ error: 'Missing params' })
   try {
-    console.log(`Searching flights: ${from} -> ${to} on ${date}`)
+    console.log('Searching flights: ' + from + ' -> ' + to + ' on ' + date)
     const response = await axios.get('https://serpapi.com/search', {
       params: {
         engine: 'google_flights',
@@ -16,48 +16,46 @@ router.get('/search', async (req, res) => {
         outbound_date: date,
         currency: 'GBP',
         hl: 'en',
-        type: '2',
         adults: adults,
         children: children,
+        type: '2',
         api_key: process.env.SERPAPI_KEY,
       },
       timeout: 30000
     })
 
     const data = response.data
-    const bestFlights = data.best_flights || []
-    const otherFlights = data.other_flights || []
-    const allFlights = [...bestFlights, ...otherFlights]
+    const allFlights = [...(data.best_flights || []), ...(data.other_flights || [])]
 
     if (!allFlights.length) {
       return res.status(404).json({ error: 'No flights found. Try different dates.' })
     }
 
-    const flights = allFlights.map(f => {
-      const leg = f.flights?.[0]
+    const flights = allFlights.map(function(f) {
+      const leg = f.flights && f.flights[0]
       return {
         price: f.price,
         currency: 'GBP',
-        airline: leg?.airline || 'Unknown',
-        airline_logo: leg?.airline_logo || null,
-        stops: f.flights?.length - 1 || 0,
-        departure: leg?.departure_airport?.time || date + ' 00:00',
-        arrival: f.flights?.slice(-1)[0]?.arrival_airport?.time || date + ' 00:00',
+        airline: leg ? leg.airline : 'Unknown',
+        airline_logo: leg ? leg.airline_logo : null,
+        stops: f.flights ? f.flights.length - 1 : 0,
+        departure: leg && leg.departure_airport ? leg.departure_airport.time : date + ' 00:00',
+        arrival: f.flights && f.flights.slice(-1)[0] && f.flights.slice(-1)[0].arrival_airport ? f.flights.slice(-1)[0].arrival_airport.time : date + ' 00:00',
         duration: f.total_duration,
-        flight_number: leg?.flight_number || '',
-        booking_link: f.booking_token ? `https://www.google.com/flights?hl=en#flt=..` : null,
-        booking_link: f.booking_token ? https://www.google.com/flights?hl=en#flt=.. : null,
+        flight_number: leg ? leg.flight_number : '',
+        booking_token: f.booking_token || null,
+        booking_link: 'https://www.google.com/travel/flights?q=Flights+from+' + from + '+to+' + to + '+on+' + date
       }
-    }).sort((a, b) => a.price - b.price)
+    }).sort(function(a, b) { return a.price - b.price })
 
     const cheapest = flights[0].price
     await savePrice(from, to, cheapest, 'GBP', flights[0].airline, flights[0].stops)
-    console.log(`Found ${flights.length} flights, cheapest: £${cheapest}`)
+    console.log('Found ' + flights.length + ' flights, cheapest: ' + cheapest)
 
     res.json({ from, to, date, cheapest, flights, count: flights.length })
   } catch (e) {
-    console.error('SerpAPI error:', e.response?.data || e.message)
-    res.status(500).json({ error: e.response?.data?.error || e.message })
+    console.error('SerpAPI error:', e.response ? e.response.data : e.message)
+    res.status(500).json({ error: e.response ? e.response.data.error : e.message })
   }
 })
 
@@ -66,12 +64,12 @@ router.get('/history', async (req, res) => {
   if (!from || !to) return res.status(400).json({ error: 'Missing from or to' })
   try {
     const history = await getPriceHistory(from, to, parseInt(days))
-    const prices = history.map(h => h.price)
+    const prices = history.map(function(h) { return h.price })
     res.json({
       history,
-      lowest: prices.length ? Math.min(...prices) : null,
-      highest: prices.length ? Math.max(...prices) : null,
-      average: prices.length ? Math.round(prices.reduce((a,b) => a+b,0) / prices.length) : null
+      lowest: prices.length ? Math.min.apply(null, prices) : null,
+      highest: prices.length ? Math.max.apply(null, prices) : null,
+      average: prices.length ? Math.round(prices.reduce(function(a,b) { return a+b }, 0) / prices.length) : null
     })
   } catch (e) {
     res.status(500).json({ error: e.message })
@@ -79,9 +77,3 @@ router.get('/history', async (req, res) => {
 })
 
 module.exports = router
-
-
-
-
-
-
